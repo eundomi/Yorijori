@@ -1,106 +1,103 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { Link, useParams,   } from "react-router-dom";
-import NavBottom from "../nav/BottomNav"
-import NavTop from "../nav/TopNav"
-import { MyPageMainBox, MyPageMainImgBox, MyPageMainBtnBox, MypageResipeBox} from "./ProfileStyle"
-import ResipeButton from "../mypage/ResipeList"
-import axios from 'axios';
-
+import { Link, useParams } from "react-router-dom";
+import NavBottom from "../nav/BottomNav";
+import NavTop from "../nav/TopNav";
+import ScrollToTopButton from "../nav/ScrollToTopButton";
+import { MyPageMainBox, MyPageMainImgBox, MyPageMainBtnBox, MypageResipeBox } from "./ProfileStyle";
+import ResipeButton from "../mypage/ResipeList";
+import axios from "axios";
 
 const MyPageTemplate = () => {
-  const [ userData, setUserData] = useState([])
-  const [ myPostResipe, setMyPostResipe ] = useState([])
-  const [ myLikeResipe, setMyLikeResipe ] = useState([])
-  const [ myCommentResipe, setMyCommentResipe ] = useState([])
-  const [ myHistoryResipe, setHistoryResipe ] = useState([])
-  let { userId } = useParams()
+  const [userData, setUserData] = useState([]);
+  const [myPostResipe, setMyPostResipe] = useState([]);
+  const [myLikeResipe, setMyLikeResipe] = useState([]);
+  const [myCommentResipe, setMyCommentResipe] = useState([]);
+  const [myHistoryResipe, setHistoryResipe] = useState([]);
+  let { userId } = useParams();
 
-  useEffect(()=>{
+  useEffect(() => {
     fetch(`http://localhost:8080/user/${userId}/profile`)
-      .then(response => response.json())
-      .then(data => setUserData(data.user))
-      
-      .catch(err => console.log(err))
-  },[]);
-  
+      .then((response) => response.json())
+      .then((data) => setUserData(data.user))
 
-  useEffect(()=>{
+      .catch((err) => console.log(err));
+  }, []);
+
+  useEffect(() => {
     fetch(`http://localhost:8080/user/${userId}/post`)
-      .then(response => response.json())
-      .then(data => setMyPostResipe(data.userPosts))
-    },[]);
+      .then((response) => response.json())
+      .then((data) => setMyPostResipe(data.userPosts));
+  }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     fetch(`http://localhost:8080/user/${userId}/like`)
-      .then(response => response.json())
-      .then(data => setMyLikeResipe(data.likePosts))
-    },[]);
+      .then((response) => response.json())
+      .then((data) => setMyLikeResipe(data.likePosts));
+  }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     fetch(`http://localhost:8080/user/${userId}/comment`)
-      .then(response => response.json())
-      .then(data => setMyCommentResipe(data.commentPosts))
-    },[]);
+      .then((response) => response.json())
+      .then((data) => setMyCommentResipe(data.commentPosts));
+  }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     fetch(`http://localhost:8080/user/${userId}/history`)
-      .then(response => response.json())
-      .then(data => setHistoryResipe(data.lastViewedPosts))
-    },[]);
-
+      .then((response) => response.json())
+      .then((data) => setHistoryResipe(data.lastViewedPosts));
+  }, []);
 
   return (
     <div>
       <NavTop />
-        <MyPageMainBox style={{ marginTop: "80px", marginBottom: "90px" }}>
-          <MyPageMainImgBox inImgBox>
-            
-            <MyPageMainInfoBox>
-              <div className="InfoProfile">
-                <MyPageImage src={userData.profileImage ? userData.profileImage : "../../images/baseimage.png"}/>
-                <p>{userData.nickName}</p>
+      <MyPageMainBox style={{ marginTop: "80px", marginBottom: "90px" }}>
+        <MyPageMainImgBox inImgBox>
+          <MyPageMainInfoBox>
+            <div className="InfoProfile">
+              <MyPageImage
+                src={userData.profileImage ? userData.profileImage : "../../images/baseimage.png"}
+              />
+              <p>{userData.nickName}</p>
+            </div>
+            <MyPageFollowBox className="followBox">
+              <div>
+                <p>게시글</p>
+                <span>{myPostResipe.length}</span>
               </div>
-                <MyPageFollowBox className="followBox">
-                   <div>
-                      <p>게시글</p>
-                      <span>{myPostResipe.length}</span>
-                  </div>
-                  <div>
-                    <Link to="/">
-                      <p>팔로워</p>
-                      <span>{userData.numFollowers}</span>
-                    </Link>
-                  </div>
-                  <div>
-                    <Link to="/">
-                      <p>팔로잉</p>
-                      <span>{userData.numFollowees}</span>
-                    </Link>
-                  </div>
-                </MyPageFollowBox>
-            </MyPageMainInfoBox>
-            <MyPageMainBtnBox >
-
-              <Link to={`/user/${userData._id}/edit`}>
-                <MyPageMainProfileEdit type="button" >프로필 수정</MyPageMainProfileEdit>
-              </Link>
-
-              <div style={{width: "100%", borderBottom : "1px solid #c5c5c5", marginBottom: "5px"}}>
+              <div>
+                <Link to="/">
+                  <p>팔로워</p>
+                  <span>{userData.numFollowers}</span>
+                </Link>
               </div>
-              <ResipeButton postResipe={myPostResipe} nums="0"/>
-              <ResipeButton likeResipe={myLikeResipe} nums="1"/>
-              <ResipeButton commentResipe={myCommentResipe} nums="2"/>
-              <ResipeButton historyResipe={myHistoryResipe} nums="3"/>
-              <div style={{width: "300px", height: "70px"}}></div>
-              
-            </MyPageMainBtnBox>
-          </MyPageMainImgBox>
-        </MyPageMainBox>
+              <div>
+                <Link to="/">
+                  <p>팔로잉</p>
+                  <span>{userData.numFollowees}</span>
+                </Link>
+              </div>
+            </MyPageFollowBox>
+          </MyPageMainInfoBox>
+          <MyPageMainBtnBox>
+            <Link to={`/user/${userData._id}/edit`}>
+              <MyPageMainProfileEdit type="button">프로필 수정</MyPageMainProfileEdit>
+            </Link>
 
+            <div
+              style={{ width: "100%", borderBottom: "1px solid #c5c5c5", marginBottom: "5px" }}
+            ></div>
+            <ResipeButton postResipe={myPostResipe} nums="0" />
+            <ResipeButton likeResipe={myLikeResipe} nums="1" />
+            <ResipeButton commentResipe={myCommentResipe} nums="2" />
+            <ResipeButton historyResipe={myHistoryResipe} nums="3" />
+            <div style={{ width: "300px", height: "70px" }}></div>
+          </MyPageMainBtnBox>
+        </MyPageMainImgBox>
+      </MyPageMainBox>
+      <ScrollToTopButton />
       <NavBottom />
     </div>
-  
   );
 };
 
@@ -115,14 +112,14 @@ const MyPageImage = styled.img`
     font-size: 18px;
     font-weight: 500;
   }
-`
+`;
 const MyPageMainProfileEdit = styled.button`
   width: 315px;
   height: 45px;
   font-weight: bold;
   font-size: 16px;
   border-radius: 10px;
-  background-color: #FEAE11;
+  background-color: #feae11;
   display: inline-block;
   outline: none;
   border: none;
@@ -130,12 +127,12 @@ const MyPageMainProfileEdit = styled.button`
   color: white;
   margin-top: 14px;
   margin-bottom: 30px;
-`
+`;
 
 const MyPageFollowBox = styled.div`
   width: 150px;
   height: 100px;
-`
+`;
 
 const MyPageMainInfoBox = styled.div`
   display: flex;
@@ -149,7 +146,7 @@ const MyPageMainInfoBox = styled.div`
       font-size: 16px;
       margin: 8px 0 20px 0;
     }
-  };
+  }
 
   .followBox {
     position: relative;
@@ -157,7 +154,7 @@ const MyPageMainInfoBox = styled.div`
     top: 10px;
     display: flex;
     justify-content: center;
-    line-height: 5px;    
+    line-height: 5px;
     align-items: center;
     width: 220px;
     color: gray;
@@ -183,5 +180,5 @@ const MyPageMainInfoBox = styled.div`
       }
     }
   }
-`
+`;
 export default MyPageTemplate;
