@@ -55,12 +55,12 @@ const Modal = () => {
 
   const getRecipe = async () => {
     try {
-      const url = `http://localhost:8080/post?page=${page}&perPage=10`;
+      const url = `http://localhost:8080/post/sortByLike`;
 
       const fetchData = async () => {
         // setLoading(true);
         const result = await axios(url);
-        const resultrecipes = recipes.concat(result.data);
+        const resultrecipes = recipes.concat(result.data.limitedSortedPosts);
         setRecipes(resultrecipes);
         // setLoading(false);
       };

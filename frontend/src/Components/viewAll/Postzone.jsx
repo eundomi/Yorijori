@@ -26,7 +26,7 @@ const Postzone = () => {
   const getRecipe = async () => {
     try {
       const query = filteredData;
-      const urlAll = `http://localhost:8080/post?page=${page}&perPage=10`;
+      const urlAll = `http://localhost:8080/post/sortByLike?startIndex=${page}&limit=10`;
       const urlSearch = `http://localhost:8080/post/search?recipeName=${query}`;
 
       let url;
@@ -35,7 +35,7 @@ const Postzone = () => {
         const fetchData = async () => {
           // setLoading(true);
           const result = await axios(url);
-          const resultrecipes = recipes.concat(result.data);
+          const resultrecipes = recipes.concat(result.data.limitedSortedPosts);
           setRecipes(resultrecipes);
           // setLoading(false);
         };
@@ -45,7 +45,7 @@ const Postzone = () => {
         const fetchData = async () => {
           // setLoading(true);
           const result = await axios(url);
-          setRecipes(result.data);
+          setRecipes(result.data.limitedSortedPosts);
           // setLoading(false);
         };
         fetchData();
