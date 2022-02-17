@@ -10,6 +10,7 @@ import ScrollToTopButton from "../nav/ScrollToTopButton";
 
 import { useRecoilValue } from "recoil";
 import { randomButtonState, randomPostState } from "../../states/ViewAllAtom";
+import CategoryDropdown from "../post/PostStepFour/CategoryDropdown";
 
 const ViewAll = () => {
   const randomButton = useRecoilValue(randomButtonState);
@@ -21,6 +22,7 @@ const ViewAll = () => {
       <TopNav_main />
       <Content>
         <Buttons />
+        <CategoryDropdown></CategoryDropdown>
         <Postzone />
       </Content>
       <ScrollToTopButton />

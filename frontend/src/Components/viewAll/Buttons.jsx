@@ -31,18 +31,6 @@ const Buttons = () => {
   };
 
   const clearDropDownOptions = (e) => {
-    const defaultName = document.querySelectorAll(".rdn-control-placeholder");
-    const defaultNameList = ["종류", "재료", "상황", "방법"];
-    defaultName.forEach((item, index) => {
-      item.innerText = defaultNameList[index];
-    });
-
-    setDropDownOptions(() => ({
-      category: "",
-      material: "",
-      condition: "",
-      cook: "",
-    }));
     if (e.target.id === "famous") {
       setCurrentSortState("famous");
     } else {
@@ -50,22 +38,29 @@ const Buttons = () => {
     }
   };
 
-  const getRecipe = async () => {
-    try {
-      const url = `http://localhost:8080/post?page=${page}&perPage=10`;
+  // const getRecipe = async () => {
+  //   try {
+  //     const url = `http://localhost:8080/post`;
 
-      const fetchData = async () => {
-        // setLoading(true);
-        const result = await axios(url);
-        const resultrecipes = recipes.concat(result.data);
-        setRecipes(resultrecipes);
-        // setLoading(false);
-      };
-      fetchData();
-    } catch {
-      console.error("에러");
-    }
-  };
+  //     const fetchData = async () => {
+  //       // setLoading(true);
+  //       const result = await axios(url);
+  //       const resultrecipes = recipes.concat(result.data.limitedSortedPosts);
+  //       setRecipes(resultrecipes);
+  //       // setLoading(false);
+  //     };
+  //     fetchData();
+  //   } catch {
+  //     console.error("에러");
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   if (page <= (Math.ceil(recipes.length) + 10) / 10) {
+  //     console.log("page?", page);
+  //     getRecipe();
+  //   }
+  // });
 
   useEffect(() => {
     const defaultName = document.querySelectorAll(".rdn-control-placeholder");
@@ -79,11 +74,11 @@ const Buttons = () => {
         item.innerText = dropDownOptions[defaultCategory[index]];
       }
     });
-
-    if (page <= (Math.ceil(recipes.length) + 10) / 10) {
-      console.log("page?", page);
-      getRecipe();
-    }
+    // getRecipe();
+    // if (page <= (Math.ceil(recipes.length) + 10) / 10) {
+    //   console.log("page?", page);
+    //   getRecipe();
+    // }
   }, [page]);
 
   return (
@@ -106,69 +101,6 @@ const Buttons = () => {
             <p>랜덤메뉴</p>
           </RandomButtonWapper>
         </ButtonWrapper>
-        <Line />
-        <DropdownWrapper>
-          <Dropdown
-            placeholder="종류"
-            options={["한식", "중식", "일식", "아시안", "양식", "기타"]}
-            value="one"
-            onChange={(value) => console.log("change!", value)}
-            onSelect={(value) => {
-              setDropDownOptions((dropDownValues) => ({
-                ...dropDownValues,
-                category: value.value,
-              }));
-            }} // always fires once a selection happens even if there is no change
-          />
-
-          <Dropdown
-            placeholder="재료"
-            options={["육류", "채소류", "해물류", "과일류", "달걀/유제품", "기타"]}
-            value="one"
-            onChange={(value) => console.log("change!", value)}
-            onSelect={(value) => {
-              setDropDownOptions((dropDownValues) => ({
-                ...dropDownValues,
-                material: value.value,
-              }));
-            }} // always fires once a selection happens even if there is no change
-          />
-          <Dropdown
-            placeholder="상황"
-            options={[
-              "파티",
-              "주말에 혼먹",
-              "근사하게",
-              "다이어트",
-              "영양식",
-              "야식",
-              "간식",
-              "초스피드",
-              "기타",
-            ]}
-            value="one"
-            onChange={(value) => console.log("change!", value)}
-            onSelect={(value) => {
-              setDropDownOptions((dropDownValues) => ({
-                ...dropDownValues,
-                condition: value.value,
-              }));
-            }} // always fires once a selection happens even if there is no change
-          />
-          <Dropdown
-            placeholder="방법"
-            options={["볶음", "무침", "비빔", "끓이기", "굽기", "삶기", "튀김", "기타"]}
-            className="last"
-            value="one"
-            onChange={(value) => console.log("change!", value)}
-            onSelect={(value) => {
-              setDropDownOptions((dropDownValues) => ({
-                ...dropDownValues,
-                cook: value.value,
-              }));
-            }} // always fires once a selection happens even if there is no change
-          />
-        </DropdownWrapper>
         <Line />
       </Wrapper>
     </>
@@ -234,38 +166,4 @@ const Line = styled.div`
   width: 360px;
   height: 1px;
   background-color: rgba(0, 0, 0, 0.14);
-`;
-const DropdownWrapper = styled.div`
-  display: flex;
-  margin: 14px 0;
-  justify-content: center;
-  & > div {
-    width: 76px;
-    height: 36px;
-    border: 2px solid #feae11;
-    border-radius: 50px;
-    line-height: 36px;
-    font-size: 13px;
-    font-weight: 900;
-    color: #feae11;
-
-    &:not(:last-child) {
-      margin-right: 8px;
-    }
-    & > div:not(:first-child) {
-      background-color: white;
-      width: 120px;
-      z-index: 100;
-      color: #feae11;
-      transform: translateY(-5px) translateX(10px);
-      border-radius: 10px;
-      border: 2px solid #feae11;
-    }
-    .last:not(:first-child) {
-      transform: translateY(-5px) translateX(-60px);
-    }
-    .situation:nth-child(2) > :nth-child(3) {
-      font-size: 13px;
-    }
-  }
 `;

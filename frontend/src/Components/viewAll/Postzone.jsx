@@ -2,16 +2,18 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { dropDownOptionsState } from "../../states/ViewAllAtom";
-import { useRecoilValue, useResetRecoilState } from "recoil";
+import { useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil";
 import { searchAtom } from "../nav/NavAtom";
 import axios from "axios";
+import CategoryDropdown from "../post/PostStepFour/CategoryDropdown";
 const Postzone = () => {
   const filteredData = useRecoilValue(searchAtom);
   const [page, setPage] = useState(1);
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const dropDownOptions = useRecoilValue(dropDownOptionsState);
-
+  const setDropDownOptions = useSetRecoilState(dropDownOptionsState);
+  console.log("레시피페이지 렌더링");
   const handleScroll = () => {
     const scrollHeight = document.documentElement.scrollHeight;
     const scrollTop = document.documentElement.scrollTop;
@@ -23,14 +25,25 @@ const Postzone = () => {
     }
   };
 
-  const getRecipe = async () => {
+  const getRecipe = () => {
     try {
-      const query = filteredData;
-      const urlAll = `http://localhost:8080/post/sortByLike?startIndex=${page}&limit=10`;
-      const urlSearch = `http://localhost:8080/post/search?recipeName=${query}`;
+      const query = String(filteredData);
+      const urlAll = `http://localhost:8080/post?startIndex=${page}&limit=10`;
+      const urlSearch = `http://localhost:8080/post?recipeName=${query}`;
 
       let url;
-      if (filteredData === "") {
+      if (query) {
+        url = urlSearch;
+        const fetchData = async () => {
+          // setLoading(true);
+          const result = await axios(url);
+
+          setRecipes(result.data);
+
+          // setLoading(false);
+        };
+        fetchData();
+      } else {
         url = urlAll;
         const fetchData = async () => {
           // setLoading(true);
@@ -40,95 +53,89 @@ const Postzone = () => {
           // setLoading(false);
         };
         fetchData();
-      } else {
-        url = urlSearch;
-        const fetchData = async () => {
-          // setLoading(true);
-          const result = await axios(url);
-          setRecipes(result.data.limitedSortedPosts);
-          // setLoading(false);
-        };
-        fetchData();
       }
     } catch {
       console.error("에러");
     }
   };
-  useEffect(() => {
-    if (page <= (Math.ceil(recipes.length) + 10) / 10) {
-      console.log("page?", page);
-      getRecipe();
-    }
-  }, [filteredData, page]);
 
   useEffect(() => {
+    getRecipe();
+    // console.log("1", recipes, filteredData);
+    // if (page <= (Math.ceil(recipes.length) + 10) / 10) {
+    //   console.log("page?", page);
+    //   // console.log(recipes);
+    //   // console.log(recipes.length);
+    // }
+  }, [filteredData, page]);
+  // console.log("2", recipes, filteredData);
+  useEffect(() => {
     window.addEventListener("scroll", handleScroll);
+    // console.log("3", recipes, filteredData);
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+  if (dropDownOptions.category) {
+    console.log(dropDownOptions.category, "카테고리가 생겼어요");
+    // const url = `http://localhost:8080/post/withFilter?category=${dropDownOptions.category}`;
 
+    // const fetchData = async () => {
+    //   // setLoading(true);
+    //   const result = await axios(url);
+    //   const resultrecipes = recipes.concat(result.data.limitedSortedPosts);
+    //   setRecipes(resultrecipes);
+    //   // setLoading(false);
+    // };
+    // fetchData();
+  }
+  // else console.log("카테고리가 생겼어요");
+  if (dropDownOptions.material) {
+    console.log("material가 생겼어요");
+  }
+  // else console.log("material가 생겼어요");
+  if (dropDownOptions.condition) {
+    console.log("condition가 생겼어요");
+  }
+  // else console.log("condition가 생겼어요");
+  if (dropDownOptions.cook) {
+    console.log("cook가 생겼어요");
+  }
+  // else console.log("cook가 생겼어요");
   console.log(recipes);
-
   return (
     <Wrapper>
-      <WrapperPost onScroll={handleScroll}>
-        {recipes
-          .filter((data) => {
-            if (dropDownOptions.category === "") {
-              return data.category;
-            }
-            return data.category === dropDownOptions.category;
-          })
-          .filter((data) => {
-            if (dropDownOptions.material === "") {
-              return data.material;
-            }
-            return data.material === dropDownOptions.material;
-          })
-          .filter((data) => {
-            if (dropDownOptions.condition === "") {
-              return data.condition;
-            }
-            return data.condition === dropDownOptions.condition;
-          })
-          .filter((data) => {
-            if (dropDownOptions.cook === "") {
-              return data.cook;
-            }
-            return data.cook === dropDownOptions.cook;
-          })
-          .map((data) => {
-            let recipeName = data.recipeName;
-            let nickname = data.userId.nickName;
-            if (recipeName.length > 20) {
-              recipeName = recipeName.substring(0, 19) + "…";
-            }
-
-            return (
-              <Link
-                to={`/detail/${data._id}`}
-                style={{ textDecoration: "none", color: "inherit" }}
-                nickname={nickname}
-                title={recipeName}
-                key={data._id}
-              >
-                <div>
-                  <Img src={data.thumbnail} />
-                  <TextBox>
-                    <Title>{recipeName}</Title>
-                    <Author>{nickname}</Author>
-                    <WrapperHeartComment>
-                      <span className="sprite heart" />{" "}
-                      <HeartCommentCount>{data.numLikes}</HeartCommentCount>
-                      <span className="sprite comment" />{" "}
-                      <HeartCommentCount>{data.numComments}</HeartCommentCount>
-                    </WrapperHeartComment>
-                  </TextBox>
-                </div>
-              </Link>
-            );
-          })}
+      <WrapperPost>
+        {recipes.map((data, index) => {
+          let recipeName = data.recipeName;
+          let nickname = data.userId.nickName;
+          if (recipeName.length > 20) {
+            recipeName = recipeName.substring(0, 19) + "…";
+          }
+          return (
+            <Link
+              to={`/detail/${data._id}`}
+              style={{ textDecoration: "none", color: "inherit" }}
+              nickname={nickname}
+              title={recipeName}
+              key={index}
+            >
+              <div>
+                <Img src={data.thumbnail} />
+                <TextBox>
+                  <Title>{recipeName}</Title>
+                  <Author>{nickname}</Author>
+                  <WrapperHeartComment>
+                    <span className="sprite heart" />{" "}
+                    <HeartCommentCount>{data.numLikes}</HeartCommentCount>
+                    <span className="sprite comment" />{" "}
+                    <HeartCommentCount>{data.numComments}</HeartCommentCount>
+                  </WrapperHeartComment>
+                </TextBox>
+              </div>
+            </Link>
+          );
+        })}
       </WrapperPost>
     </Wrapper>
   );

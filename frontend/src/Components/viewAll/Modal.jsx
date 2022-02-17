@@ -55,7 +55,7 @@ const Modal = () => {
 
   const getRecipe = async () => {
     try {
-      const url = `http://localhost:8080/post/sortByLike`;
+      const url = `http://localhost:8080/post`;
 
       const fetchData = async () => {
         // setLoading(true);
@@ -74,7 +74,7 @@ const Modal = () => {
       console.log("page?", page);
       getRecipe();
     }
-  }, [page]);
+  });
 
   return (
     <ModalWrapping RandomButtonPush={randomButton}>
